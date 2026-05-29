@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>法律倫理學考古題庫</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>法律倫理學考古題庫</h1>
+    <p class="subtitle">律師考試 ・ 司法官考試 ・ 民國100–114年</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── Search Panel ── -->
+  <section class="search-panel">
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="keyword">
+        <span class="tab-icon">🔍</span> 關鍵字搜尋
+      </button>
+      <button class="mode-tab" data-mode="scenario">
+        <span class="tab-icon">💡</span> 情境搜尋
+      </button>
+    </div>
+
+    <!-- ── Keyword Mode ── -->
+    <div id="keywordMode">
+      <div class="search-row">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="輸入關鍵字，例如：保密義務、利益衝突、法官迴避…"
+          autocomplete="off"
+        />
+        <button id="clearBtn" title="清除">✕</button>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <span class="filter-label">考試：</span>
+          <button class="pill active" data-filter="examType" data-value="">全部</button>
+          <button class="pill" data-filter="examType" data-value="律師考試">律師考試</button>
+          <button class="pill" data-filter="examType" data-value="司法特考">司法特考</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">題型：</span>
+          <button class="pill active" data-filter="qType" data-value="">全部</button>
+          <button class="pill" data-filter="qType" data-value="單選題">單選題</button>
+          <button class="pill" data-filter="qType" data-value="申論題">申論題</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">年份：</span>
+          <select id="yearSelect" class="pill">
+            <option value="">全部年份</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="tags-row">
+        <span class="tags-label">主題：</span>
+        <div class="tags-wrap" id="tagsWrap"></div>
+      </div>
+    </div>
+
+    <!-- ── Scenario Mode ── -->
+    <div id="scenarioMode" style="display:none">
+      <div class="scenario-input-wrap">
+        <textarea
+          id="scenarioInput"
+          rows="4"
+          placeholder="用白話文描述一個情境，例如：&#10;律師甲即將離開事務所，他想聯繫原本負責的客戶，希望客戶跟他走到新事務所繼續委任他辦案…"
+        ></textarea>
+        <button id="scenarioSearchBtn">搜尋相關題目</button>
+      </div>
+      <div class="scenario-examples">
+        <span class="ex-label">情境範例：</span>
+        <span class="ex-chip" data-text="律師知道客戶打算詐騙朋友，應不應該透露給朋友？">保密義務例外</span>
+        <span class="ex-chip" data-text="法官的配偶是這個案件的律師，法官該怎麼辦？">法官迴避</span>
+        <span class="ex-chip" data-text="律師同時幫原告和被告辦同一件案件">雙方代理</span>
+        <span class="ex-chip" data-text="律師離職前聯繫客戶希望客戶轉委任自己">受僱律師離職</span>
+        <span class="ex-chip" data-text="代書介紹案件給律師，律師要給代書介紹費">介紹費</span>
+        <span class="ex-chip" data-text="檢察官起訴後發現被告可能是無辜的">檢察官客觀義務</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── Results Bar ── -->
+  <div class="results-bar">
+    <span class="results-count" id="resultsCount">共找到 <strong>0</strong> 題</span>
+    <button id="resetBtn">重設</button>
+  </div>
+
+  <!-- ── Questions ── -->
+  <div class="questions-list" id="questionsList"></div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="icon">⚖️</div>
+    <p>找不到符合條件的考古題</p>
+    <small>請嘗試其他關鍵字或調整情境描述</small>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>
+    考題來源：<a href="https://wwwq.moex.gov.tw/exam/wFrmExamQandASearch.aspx" target="_blank" rel="noopener">考選部歷屆試題</a>
+    ／原題連結指向 <a href="https://lawplayer.com" target="_blank" rel="noopener">lawplayer.com</a>，答案以考選部公告為準。
+    民國115年第一試預定 115年8月1日舉行，考後更新。
+  </p>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
