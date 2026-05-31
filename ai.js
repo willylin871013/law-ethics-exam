@@ -10,6 +10,16 @@ const aiCopyBtn     = document.getElementById("aiCopyBtn");
 
 // Tab 切換由 app.js 統一處理
 
+// ── 答題風格切換 ────────────────────────────────────────────
+let currentStyle = "structured";
+document.querySelectorAll(".style-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".style-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentStyle = btn.dataset.style;
+  });
+});
+
 // 範例 chip
 document.querySelectorAll(".ai-ex-chip").forEach(chip => {
   chip.addEventListener("click", () => {
@@ -41,7 +51,7 @@ async function submitQuestion() {
     const res = await fetch("/api/essay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q })
+      body: JSON.stringify({ question: q, style: currentStyle })
     });
 
     if (!res.ok) throw new Error(`伺服器錯誤 ${res.status}`);
