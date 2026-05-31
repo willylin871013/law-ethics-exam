@@ -111,7 +111,9 @@ SYSTEM_PROMPT_CONCISE = _BASE + """
 # ── 路由 ────────────────────────────────────────────────────
 @app.route("/")
 def index():
-    return send_from_directory(BASE_DIR, "index.html")
+    resp = send_from_directory(BASE_DIR, "index.html")
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
 
 @app.route("/api/essay", methods=["POST"])
 def essay():
