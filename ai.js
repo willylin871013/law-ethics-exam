@@ -7,6 +7,7 @@ const aiLoadingSpinner = document.getElementById("aiLoadingSpinner");
 const aiAnswerWrap     = document.getElementById("aiAnswerWrap");
 const aiAnswerStructured = document.getElementById("aiAnswerStructured");
 const aiAnswerParagraph  = document.getElementById("aiAnswerParagraph");
+const aiAnswerConcise    = document.getElementById("aiAnswerConcise");
 
 // Tab 切換由 app.js 統一處理
 
@@ -33,13 +34,15 @@ async function submitQuestion() {
   aiLoadingSpinner.style.display = "";
   aiSubmitBtn.disabled           = true;
   aiAnswerWrap.style.display     = "";
-  aiAnswerStructured.innerHTML   = '<span class="ai-cursor">▍</span>';
-  aiAnswerParagraph.innerHTML    = '<span class="ai-cursor">▍</span>';
+  aiAnswerStructured.innerHTML = '<span class="ai-cursor">▍</span>';
+  aiAnswerParagraph.innerHTML  = '<span class="ai-cursor">▍</span>';
+  aiAnswerConcise.innerHTML    = '<span class="ai-cursor">▍</span>';
 
-  // 同時發兩個請求
+  // 同時發三個請求
   await Promise.all([
     streamAnswer(q, "structured", aiAnswerStructured),
     streamAnswer(q, "paragraph",  aiAnswerParagraph),
+    streamAnswer(q, "concise",    aiAnswerConcise),
   ]);
 
   aiSubmitText.style.display     = "";

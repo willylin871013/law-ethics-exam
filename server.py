@@ -94,6 +94,20 @@ SYSTEM_PROMPT_PARAGRAPH = _BASE + """
 - 字數：330~480字，嚴格控制，不得超過480字
 """
 
+SYSTEM_PROMPT_CONCISE = _BASE + """
+【答題格式：精簡版】
+以最精煉的方式作答，全文不超過300字。
+
+核心要求：
+- 一句話點出法條依據與要件
+- 緊接涵攝：直接說明題目事實符合哪個要件、為何符合
+- 最後一句結論：法律效果或懲戒種類
+- 不廢話、不重複、不鋪陳背景
+- 可使用極簡條列（最多3點）或單一段落，以清晰為準
+- 使用繁體中文，語氣精準
+- 字數：200~299字，嚴格控制，不得超過300字
+"""
+
 # ── 路由 ────────────────────────────────────────────────────
 @app.route("/")
 def index():
@@ -107,12 +121,15 @@ def essay():
     if not question:
         return {"error": "請輸入題目"}, 400
 
-    system_prompt = SYSTEM_PROMPT_PARAGRAPH if style == "paragraph" else SYSTEM_PROMPT_STRUCTURED
-    style_instruction = (
-        "以段落式論述作答，以涵攝為核心，一至三段，不使用條列標題，全文嚴格控制在330至480字之間"
-        if style == "paragraph" else
-        "以條列式三段論法與涵攝方法完整作答，全文嚴格控制在330至480字之間"
-    )
+    if style == "paragraph":
+        system_prompt = SYSTEM_PROMPT_PARAGRAPH
+        style_instruction = "以段落式論述作答，以涵攝為核心，一至三段，不使用條列標題，全文嚴格控制在330至480字之間"
+    elif style == "concise":
+        system_prompt = SYSTEM_PROMPT_CONCISE
+        style_instruction = "以精簡版格式作答，直擊涵攝與結論，全文嚴格控制在200至299字之間，不得超過300字"
+    else:
+        system_prompt = SYSTEM_PROMPT_STRUCTURED
+        style_instruction = "以條列式三段論法與涵攝方法完整作答，全文嚴格控制在330至480字之間"
 
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
