@@ -668,3 +668,144 @@ mark {
   .q-head { flex-direction: column; }
   #scenarioSearchBtn { align-self: stretch; text-align: center; }
 }
+
+/* ── AI 申論答題 ─────────────────────────────────── */
+.ai-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+#aiQuestion {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  resize: vertical;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+}
+
+#aiQuestion:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+
+#aiSubmitBtn {
+  align-self: flex-end;
+  padding: 0.65rem 1.8rem;
+  background: linear-gradient(135deg, var(--navy), var(--blue));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+#aiSubmitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+#aiSubmitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.ai-answer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.ai-answer-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+#aiCopyBtn {
+  padding: 0.35rem 0.9rem;
+  background: var(--blue-light);
+  border: 1.5px solid var(--blue);
+  border-radius: 6px;
+  color: var(--blue);
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+#aiCopyBtn:hover { background: var(--blue); color: #fff; }
+
+.ai-answer {
+  background: #fafbff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.9;
+  color: var(--text);
+  min-height: 120px;
+  white-space: pre-wrap;
+}
+
+.ai-answer p { margin-bottom: 0.6em; }
+
+.ai-answer h4.ans-h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 1.1em 0 0.4em;
+  padding-left: 0.5em;
+  border-left: 3px solid var(--gold);
+}
+
+.ai-answer li {
+  margin-left: 1.4em;
+  margin-bottom: 0.25em;
+}
+
+.law-ref {
+  background: var(--gold-light);
+  color: #7a5c00;
+  font-weight: 600;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+.ai-cursor {
+  display: inline-block;
+  animation: blink 0.8s step-end infinite;
+  color: var(--gold);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.ai-error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}

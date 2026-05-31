@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: law-ethics-exam
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app --bind 0.0.0.0:$PORT --timeout 120 --worker-class sync
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false

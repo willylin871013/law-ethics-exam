@@ -28,6 +28,9 @@
       <button class="mode-tab" data-mode="scenario">
         <span class="tab-icon">💡</span> 情境搜尋
       </button>
+      <button class="mode-tab" data-mode="ai">
+        <span class="tab-icon">⚖️</span> AI 申論答題
+      </button>
     </div>
 
     <!-- ── Keyword Mode ── -->
@@ -94,6 +97,36 @@
 
   </section>
 
+    <!-- ── AI 申論答題 Mode ── -->
+    <div id="aiMode" style="display:none">
+      <div class="ai-input-wrap">
+        <textarea
+          id="aiQuestion"
+          rows="5"
+          placeholder="輸入申論題題目，例如：&#10;律師甲受A委任處理其與B間之合約糾紛。案件進行中，B另行委任甲擔任其代理人，甲未告知A即接受B之委任。試問甲之行為是否違反律師倫理規範？"
+        ></textarea>
+        <button id="aiSubmitBtn">
+          <span id="aiSubmitText">生成申論答案</span>
+          <span id="aiLoadingSpinner" style="display:none">⏳ 生成中…</span>
+        </button>
+      </div>
+      <div class="ai-examples">
+        <span class="ex-label">題目範例：</span>
+        <span class="ex-chip ai-ex-chip" data-text="律師甲同時接受A與B之委任，A、B係同一訴訟之對立當事人。甲事後知悉此情形，仍未向任何一方說明。試論律師甲之行為有無違反律師倫理規範，應受何種懲戒？">利益衝突</span>
+        <span class="ex-chip ai-ex-chip" data-text="法官甲在審理刑事案件期間，接受媒體採訪，就案件進行中之爭點公開發表意見，並批評辯護律師之策略。試論法官甲之行為是否違反法官倫理規範及相關法律規定？">法官媒體發言</span>
+        <span class="ex-chip ai-ex-chip" data-text="檢察官甲偵辦貪污案件，上級檢察長以書面命甲撤回起訴，甲認為被告犯罪嫌疑重大，不服從指示。試問甲之行為是否符合檢察一體原則？有無違反檢察官倫理規範？">檢察一體</span>
+        <span class="ex-chip ai-ex-chip" data-text="律師甲曾以主任檢察官身分偵辦A案，離職轉任律師後，受B委任擔任A案二審辯護人。試論此情形是否違反律師倫理規範？">司法官轉任限制</span>
+        <span class="ex-chip ai-ex-chip" data-text="律師甲在禁見被告羈押期間，以辯護人身分接見被告後，將被告家書及相關文件攜出交予被告家屬。試論甲之行為有無違反律師法及律師倫理規範？">律見特權濫用</span>
+      </div>
+      <div id="aiAnswerWrap" style="display:none">
+        <div class="ai-answer-header">
+          <h3>申論答案</h3>
+          <button id="aiCopyBtn" title="複製答案">📋 複製</button>
+        </div>
+        <div id="aiAnswer" class="ai-answer"></div>
+      </div>
+    </div>
+
   <!-- ── Results Bar ── -->
   <div class="results-bar">
     <span class="results-count" id="resultsCount">共找到 <strong>0</strong> 題</span>
@@ -121,5 +154,6 @@
 
 <script src="data.js"></script>
 <script src="app.js"></script>
+<script src="ai.js"></script>
 </body>
 </html>
