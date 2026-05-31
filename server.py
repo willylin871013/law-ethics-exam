@@ -75,7 +75,7 @@ SYSTEM_PROMPT = f"""你是台灣律師考試「法律倫理學」科目的專業
 - 條理清晰，段落分明
 - 引用法條格式：「○○法第X條第X項規定：『…』」
 - 適當引用課程案例（判決字號）作為佐證
-- 申論題作答長度：500~1000字
+- 申論題作答長度：330~480字，嚴格控制，不得超過480字
 """
 
 # ── 路由 ────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ def essay():
                 model="claude-opus-4-8",
                 max_tokens=4096,
                 system=SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": f"請針對以下申論題，以三段論法與涵攝方法完整作答：\n\n{question}"}]
+                messages=[{"role": "user", "content": f"請針對以下申論題，以三段論法與涵攝方法完整作答，全文嚴格控制在330至480字之間：\n\n{question}"}]
             ) as stream:
                 for text in stream.text_stream:
                     yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
