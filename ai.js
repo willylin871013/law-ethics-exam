@@ -8,25 +8,7 @@ const aiAnswerWrap  = document.getElementById("aiAnswerWrap");
 const aiAnswer      = document.getElementById("aiAnswer");
 const aiCopyBtn     = document.getElementById("aiCopyBtn");
 
-// 掛接 AI 分頁切換（配合 app.js 的 mode-tab 邏輯）
-document.querySelectorAll(".mode-tab[data-mode='ai']").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.getElementById("keywordMode").style.display  = "none";
-    document.getElementById("scenarioMode").style.display = "none";
-    document.getElementById("aiMode").style.display       = "";
-    document.querySelector(".results-bar").style.display  = "none";
-    document.getElementById("questionsList").style.display = "none";
-    document.getElementById("emptyState").style.display   = "none";
-  });
-});
-
-// 點其他 tab 時隱藏 AI 區
-document.querySelectorAll(".mode-tab:not([data-mode='ai'])").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.getElementById("aiMode").style.display = "none";
-    document.querySelector(".results-bar").style.display = "";
-  });
-});
+// Tab 切換由 app.js 統一處理
 
 // 範例 chip
 document.querySelectorAll(".ai-ex-chip").forEach(chip => {

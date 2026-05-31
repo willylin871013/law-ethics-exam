@@ -349,17 +349,31 @@ function bindEvents() {
       document.querySelectorAll(".mode-tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
+      const aiModeEl = document.getElementById("aiMode");
+      const resultsBar = document.querySelector(".results-bar");
+
+      // 隱藏全部 mode panels
+      keywordMode.style.display = "none";
+      scenarioModeEl.style.display = "none";
+      if (aiModeEl) aiModeEl.style.display = "none";
+
       if (mode === "keyword") {
         keywordMode.style.display = "";
-        scenarioModeEl.style.display = "none";
+        if (resultsBar) resultsBar.style.display = "";
+        questionsList.style.display = "";
         state.scenarioResults = null;
         render();
-      } else {
-        keywordMode.style.display = "none";
+      } else if (mode === "scenario") {
         scenarioModeEl.style.display = "";
-        // Clear previous keyword results
+        if (resultsBar) resultsBar.style.display = "";
+        questionsList.style.display = "";
         questionsList.innerHTML = "";
         countEl.innerHTML = `輸入情境後點「搜尋相關題目」`;
+        emptyState.style.display = "none";
+      } else if (mode === "ai") {
+        if (aiModeEl) aiModeEl.style.display = "";
+        if (resultsBar) resultsBar.style.display = "none";
+        questionsList.style.display = "none";
         emptyState.style.display = "none";
       }
     });
