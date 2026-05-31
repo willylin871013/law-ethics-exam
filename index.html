@@ -120,8 +120,8 @@
         <span class="ex-chip ai-ex-chip" data-text="律師甲在禁見被告羈押期間，以辯護人身分接見被告後，將被告家書及相關文件攜出交予被告家屬。試論甲之行為有無違反律師法及律師倫理規範？">律見特權濫用</span>
       </div>
       <div id="aiAnswerWrap" style="display:none">
+        <!-- 上方兩欄 -->
         <div class="ai-dual-grid">
-          <!-- 條列式 -->
           <div class="ai-answer-col">
             <div class="ai-answer-header">
               <h3>📋 條列式三段論</h3>
@@ -129,7 +129,6 @@
             </div>
             <div id="aiAnswerStructured" class="ai-answer"></div>
           </div>
-          <!-- 段落式 -->
           <div class="ai-answer-col">
             <div class="ai-answer-header">
               <h3>✍️ 段落式（涵攝為核心）</h3>
@@ -137,14 +136,14 @@
             </div>
             <div id="aiAnswerParagraph" class="ai-answer"></div>
           </div>
-          <!-- 精簡版 -->
-          <div class="ai-answer-col">
-            <div class="ai-answer-header">
-              <h3>⚡ 精簡版（&lt;300字）</h3>
-              <button class="aiCopyBtn" data-target="aiAnswerConcise">📋 複製</button>
-            </div>
-            <div id="aiAnswerConcise" class="ai-answer"></div>
+        </div>
+        <!-- 下方精簡版橫式 -->
+        <div class="ai-concise-row">
+          <div class="ai-answer-header">
+            <h3>⚡ 精簡版（涵攝為核心，&lt;300字）</h3>
+            <button class="aiCopyBtn" data-target="aiAnswerConcise">📋 複製</button>
           </div>
+          <div id="aiAnswerConcise" class="ai-answer ai-answer-concise"></div>
         </div>
       </div>
     </div>

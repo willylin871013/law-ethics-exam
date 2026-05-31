@@ -698,14 +698,25 @@ mark {
 
 .ai-dual-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .ai-answer-col {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.ai-concise-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ai-answer-concise {
+  line-height: 2;
 }
 
 @media (max-width: 760px) {
