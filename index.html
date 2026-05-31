@@ -105,10 +105,13 @@
           rows="5"
           placeholder="輸入申論題題目，例如：&#10;律師甲受A委任處理其與B間之合約糾紛。案件進行中，B另行委任甲擔任其代理人，甲未告知A即接受B之委任。試問甲之行為是否違反律師倫理規範？"
         ></textarea>
-        <button id="aiSubmitBtn">
-          <span id="aiSubmitText">生成申論答案</span>
-          <span id="aiLoadingSpinner" style="display:none">⏳ 生成中…</span>
-        </button>
+        <div class="ai-submit-row">
+          <button id="aiSubmitBtn">
+            <span id="aiSubmitText">生成申論答案</span>
+            <span id="aiLoadingSpinner" style="display:none">⏳ 生成中…</span>
+          </button>
+          <span class="token-badge">⚡ 消耗 API Token</span>
+        </div>
       </div>
       <div class="ai-examples">
         <span class="ex-label">題目範例：</span>
