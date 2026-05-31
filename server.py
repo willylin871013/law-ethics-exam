@@ -128,7 +128,7 @@ def essay():
         style_instruction = "以段落式論述作答，以涵攝為核心，一至三段，不使用條列標題，全文嚴格控制在330至480字之間"
     elif style == "concise":
         system_prompt = SYSTEM_PROMPT_CONCISE
-        style_instruction = "以精簡版格式作答，直擊涵攝與結論，全文嚴格控制在200至299字之間，不得超過300字"
+        style_instruction = "以段落式作答，絕對禁止使用條列符號（・、-、•）或任何編號，只能寫完整段落，以涵攝為核心直擊結論，全文嚴格控制在200至299字之間"
     else:
         system_prompt = SYSTEM_PROMPT_STRUCTURED
         style_instruction = "以條列式三段論法與涵攝方法完整作答，全文嚴格控制在330至480字之間"
