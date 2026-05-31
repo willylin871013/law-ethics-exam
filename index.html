@@ -103,17 +103,12 @@
           rows="5"
           placeholder="輸入申論題題目，例如：&#10;律師甲受A委任處理其與B間之合約糾紛。案件進行中，B另行委任甲擔任其代理人，甲未告知A即接受B之委任。試問甲之行為是否違反律師倫理規範？"
         ></textarea>
-        <div class="style-toggle-row">
-          <span class="style-label">答題風格：</span>
-          <button class="style-btn active" data-style="structured">條列式三段論</button>
-          <button class="style-btn" data-style="paragraph">段落式（涵攝為核心）</button>
-        </div>
         <div class="ai-submit-row">
           <button id="aiSubmitBtn">
             <span id="aiSubmitText">生成申論答案</span>
             <span id="aiLoadingSpinner" style="display:none">⏳ 生成中…</span>
           </button>
-          <span class="token-badge">⚡ 消耗 API Token</span>
+          <span class="token-badge">⚡ 消耗 API Token × 2</span>
         </div>
       </div>
       <div class="ai-examples">
@@ -125,11 +120,24 @@
         <span class="ex-chip ai-ex-chip" data-text="律師甲在禁見被告羈押期間，以辯護人身分接見被告後，將被告家書及相關文件攜出交予被告家屬。試論甲之行為有無違反律師法及律師倫理規範？">律見特權濫用</span>
       </div>
       <div id="aiAnswerWrap" style="display:none">
-        <div class="ai-answer-header">
-          <h3>申論答案</h3>
-          <button id="aiCopyBtn" title="複製答案">📋 複製</button>
+        <div class="ai-dual-grid">
+          <!-- 條列式 -->
+          <div class="ai-answer-col">
+            <div class="ai-answer-header">
+              <h3>📋 條列式三段論</h3>
+              <button class="aiCopyBtn" data-target="aiAnswerStructured">📋 複製</button>
+            </div>
+            <div id="aiAnswerStructured" class="ai-answer"></div>
+          </div>
+          <!-- 段落式 -->
+          <div class="ai-answer-col">
+            <div class="ai-answer-header">
+              <h3>✍️ 段落式（涵攝為核心）</h3>
+              <button class="aiCopyBtn" data-target="aiAnswerParagraph">📋 複製</button>
+            </div>
+            <div id="aiAnswerParagraph" class="ai-answer"></div>
+          </div>
         </div>
-        <div id="aiAnswer" class="ai-answer"></div>
       </div>
     </div>
 
