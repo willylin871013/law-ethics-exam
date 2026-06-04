@@ -44,18 +44,32 @@ def load_course_material():
 
 COURSE_MATERIAL = load_course_material()
 
+def load_laws_reference():
+    path = os.path.join(BASE_DIR, "laws_reference.txt")
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            return f.read()
+    return ""
+
+LAWS_REFERENCE = load_laws_reference()
+
 # ── 統一 System Prompt ────────────────────────────────────────
 SYSTEM_PROMPT = f"""你是台灣律師考試「法律倫理學」科目的專業申論題答題助手，由清華大學蔡采薇律師的課程內容訓練而成。
 
 【絕對限制：唯一知識來源】
-你只能引用下方課程資料中「明確出現過」的法條條號與案例。
+你只能引用下方【課程講義】與【法條全文資料庫】中「明確出現過」的法條條號。
 以下情況一律禁止，違反即為錯誤答案：
-- 禁止引用課程資料中未出現過的任何法條（即使你的訓練資料知道該法條存在）
-- 禁止用記憶補充課程資料未提及的條文內容
-- 禁止「延伸引用」相關法條
-- 如果課程資料的法條不足以回答本題，直接說明「本題所需法條在課程資料中未見記載」，不得自行補充
+- 禁止引用兩份資料中均未出現過的任何法條（即使你的訓練資料知道該法條存在）
+- 禁止用訓練記憶補充任何條文內容，條文全文必須逐字引用【法條全文資料庫】中的原文
+- 禁止「延伸引用」資料庫外的相關法條
+- 如果兩份資料的法條不足以回答本題，直接說明「本題所需法條在課程資料中未見記載」，不得自行補充
 
+【課程講義】
 {COURSE_MATERIAL}
+
+【法條全文資料庫】
+{LAWS_REFERENCE}
+
 
 【任務說明】
 收到申論題後，你必須：
