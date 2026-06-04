@@ -8,6 +8,7 @@ const aiAnswerWrap       = document.getElementById("aiAnswerWrap");
 const aiAnswerStructured = document.getElementById("aiAnswerStructured");
 const aiAnswerParagraph  = document.getElementById("aiAnswerParagraph");
 const aiAnswerConcise    = document.getElementById("aiAnswerConcise");
+const aiAnswerLaws       = document.getElementById("aiAnswerLaws");
 
 // Tab 切換由 app.js 統一處理
 
@@ -37,13 +38,15 @@ async function submitQuestion() {
   aiAnswerStructured.innerHTML   = '<span class="ai-cursor">▍</span>';
   aiAnswerParagraph.innerHTML    = '<span class="ai-cursor">▍</span>';
   aiAnswerConcise.innerHTML      = '<span class="ai-cursor">▍</span>';
+  aiAnswerLaws.innerHTML         = '<span class="ai-cursor">▍</span>';
 
   // 各欄的文字 buffer
-  const buffers = { STRUCTURED: "", PARAGRAPH: "", CONCISE: "" };
+  const buffers = { STRUCTURED: "", PARAGRAPH: "", CONCISE: "", LAWS: "" };
   const panels  = {
     STRUCTURED: aiAnswerStructured,
     PARAGRAPH:  aiAnswerParagraph,
     CONCISE:    aiAnswerConcise,
+    LAWS:       aiAnswerLaws,
   };
   let currentSection = null;
   let rawBuffer = "";   // 累積未完成的分隔符偵測
@@ -76,7 +79,7 @@ async function submitQuestion() {
           rawBuffer += parsed.text;
 
           // 偵測並切換分隔符
-          for (const key of ["STRUCTURED", "PARAGRAPH", "CONCISE"]) {
+          for (const key of ["STRUCTURED", "PARAGRAPH", "CONCISE", "LAWS"]) {
             const marker = `[[[${key}]]]`;
             const idx = rawBuffer.indexOf(marker);
             if (idx !== -1) {
@@ -110,6 +113,7 @@ async function submitQuestion() {
     for (const key of ["STRUCTURED", "PARAGRAPH", "CONCISE"]) {
       panels[key].innerHTML = formatAnswer(buffers[key].trim()) || panels[key].innerHTML;
     }
+    panels["LAWS"].innerHTML = formatLaws(buffers["LAWS"].trim()) || panels["LAWS"].innerHTML;
 
   } catch (err) {
     [aiAnswerStructured, aiAnswerParagraph, aiAnswerConcise].forEach(el => {
@@ -134,6 +138,16 @@ function formatAnswer(text) {
     .replace(/^[・\-]\s*(.+)$/gm, '<li>$1</li>')
     .replace(/(律師法|律師倫理規範|法官法|法官倫理規範|法官守則|檢察官倫理規範|刑事訴訟法|憲法|法院組織法|公務員懲戒法)第(\d+)條/g,
       '<span class="law-ref">$1第$2條</span>')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/\n/g, "<br>");
+}
+
+// 法條區塊格式化（高亮法條名稱，處理課程資料未載全文的標記）
+function formatLaws(text) {
+  return text
+    .replace(/^【(.+?)】$/gm, '<h4 class="law-title">【$1】</h4>')
+    .replace(/條文全文：「(.+?)」/gs, '條文全文：<blockquote class="law-text">「$1」</blockquote>')
+    .replace(/（課程資料未載全文[^）]*）/g, '<span class="law-unverified">⚠️ $&</span>')
     .replace(/\n{2,}/g, '</p><p>')
     .replace(/\n/g, "<br>");
 }
