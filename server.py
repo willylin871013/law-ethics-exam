@@ -19,13 +19,12 @@ if os.path.exists(_env_path):
 
 app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
 
-# ── 課程內容（優先讀打包的 txt，本機才嘗試讀 pptx）───────────
+# ── 課程內容 ─────────────────────────────────────────────────
 def load_course_material():
     txt_path = os.path.join(BASE_DIR, "course_material.txt")
     if os.path.exists(txt_path):
         with open(txt_path, encoding="utf-8") as f:
             return f.read()
-    # 本機 fallback：從原始 pptx 讀取
     try:
         from pptx import Presentation
         course_dir = "/Users/syuanwei/Downloads/法律倫理學"
@@ -45,67 +44,45 @@ def load_course_material():
 
 COURSE_MATERIAL = load_course_material()
 
-_BASE = f"""你是台灣律師考試「法律倫理學」科目的專業申論題答題助手，由清華大學蔡采薇律師的課程內容訓練而成。
+# ── 統一 System Prompt ────────────────────────────────────────
+SYSTEM_PROMPT = f"""你是台灣律師考試「法律倫理學」科目的專業申論題答題助手，由清華大學蔡采薇律師的課程內容訓練而成。
 
-【課程內容】
+【唯一知識來源】
+你只能引用以下課程資料中出現過的法條、案例與判決字號。嚴禁引用課程資料以外的任何法條或案例。
+
 {COURSE_MATERIAL}
-"""
 
-SYSTEM_PROMPT_STRUCTURED = _BASE + """
-【答題格式：條列式三段論】
-以下列標題依序作答：
+【任務說明】
+收到申論題後，你必須：
 
-一、大前提（法律依據）
-  ・引用具體法條（律師法、律師倫理規範、法官法、法官倫理規範、法官守則、檢察官倫理規範、刑事訴訟法、憲法等）
-  ・說明法條要件與立法目的
+第一步：從上方課程資料中，找出本題相關的法條與判決案例，確立唯一法律依據。
+第二步：以同一組法條與事實分析為基礎，依序輸出以下三種格式。
 
-二、小前提（題目事實整理）
-  ・擷取題目中的關鍵事實
-  ・逐一對應法律要件
+輸出格式規定（必須嚴格遵守分隔符）：
 
-三、涵攝（要件涵攝分析）
-  ・將事實逐一套入法律要件
-  ・說明符合或不符合之理由
-  ・如有多個爭點，分別涵攝
+[[[STRUCTURED]]]
+（條列式三段論，330~480字）
+一、大前提（法律依據）：引用法條，說明構成要件
+二、小前提（事實整理）：擷取題目關鍵事實
+三、涵攝：將事實逐一套入要件，說明符合/不符合理由
+四、結論：明確法律效果或懲戒種類
+格式：條列式，可用・符號，字數330~480字
 
-四、結論
-  ・明確指出法律效果（是否違反倫理規範、應受何種懲戒）
-  ・必要時說明免責事由或例外情形
+[[[PARAGRAPH]]]
+（段落式論述，涵攝為核心，330~480字）
+一至三段完整段落，不使用條列標題與編號符號。
+法條自然融入行文，涵攝貫穿全段，末句收束結論。字數330~480字
 
-【格式要求】
-- 使用繁體中文，條理清晰
-- 引用法條格式：「○○法第X條第X項規定：『…』」
-- 適當引用課程案例（判決字號）作為佐證
-- 字數：330~480字，嚴格控制，不得超過480字
-"""
+[[[CONCISE]]]
+（段落式精簡版，涵攝為核心，200~299字）
+一至兩段完整段落，絕對禁止任何條列符號與編號。
+直接帶出法條要件並即刻涵攝，末句明確結論。字數200~299字
 
-SYSTEM_PROMPT_PARAGRAPH = _BASE + """
-【答題格式：段落式論述】
-以一至三段完整段落作答，不使用條列標題。
-
-核心要求：
-- 涵攝是全文重心——每段均須緊扣「事實如何滿足法條要件」
-- 第一段：直接點出相關法條與其構成要件，並即刻帶入題目事實進行涵攝
-- 第二段（如有）：深入分析爭點或補充例外情形，繼續推進涵攝論證
-- 最後一至兩句：收束結論，明確法律效果或懲戒後果
-- 法條引用自然融入句子，不單獨羅列
-- 不使用「一、二、三」編號，不使用條列符號
-- 使用繁體中文，論述連貫、語氣嚴謹
-- 字數：330~480字，嚴格控制，不得超過480字
-"""
-
-SYSTEM_PROMPT_CONCISE = _BASE + """
-【答題格式：段落式精簡版（涵攝為核心）】
-以一至兩段完整段落作答，全文不超過300字。
-
-核心要求：
-- 不使用條列標題、不使用編號、不使用條列符號
-- 第一句直接帶出法條依據與構成要件，隨即融入題目事實進行涵攝
-- 涵攝是全文唯一重心：清楚說明事實如何滿足法條要件
-- 最後一至兩句收束結論，明確法律效果或懲戒後果
-- 不鋪陳背景、不重複已說過的事實、不廢話
-- 使用繁體中文，論述連貫、語氣嚴謹精準
-- 字數：200~299字，嚴格控制，不得超過300字
+重要規則：
+- 三種格式必須引用完全相同的法條與案例
+- 所有法條必須來自上方課程資料，不得自行補充
+- 每段分隔符（[[[STRUCTURED]]]等）單獨佔一行，前後不加其他文字
+- 使用繁體中文
 """
 
 # ── 路由 ────────────────────────────────────────────────────
@@ -119,19 +96,8 @@ def index():
 def essay():
     data = request.get_json()
     question = (data or {}).get("question", "").strip()
-    style    = (data or {}).get("style", "structured")   # "structured" | "paragraph"
     if not question:
         return {"error": "請輸入題目"}, 400
-
-    if style == "paragraph":
-        system_prompt = SYSTEM_PROMPT_PARAGRAPH
-        style_instruction = "以段落式論述作答，以涵攝為核心，一至三段，不使用條列標題，全文嚴格控制在330至480字之間"
-    elif style == "concise":
-        system_prompt = SYSTEM_PROMPT_CONCISE
-        style_instruction = "以段落式作答，絕對禁止使用條列符號（・、-、•）或任何編號，只能寫完整段落，以涵攝為核心直擊結論，全文嚴格控制在200至299字之間"
-    else:
-        system_prompt = SYSTEM_PROMPT_STRUCTURED
-        style_instruction = "以條列式三段論法與涵攝方法完整作答，全文嚴格控制在330至480字之間"
 
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
@@ -139,9 +105,9 @@ def essay():
         try:
             with client.messages.stream(
                 model="claude-opus-4-8",
-                max_tokens=4096,
-                system=system_prompt,
-                messages=[{"role": "user", "content": f"請針對以下申論題，{style_instruction}：\n\n{question}"}]
+                max_tokens=6000,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": f"請針對以下申論題作答：\n\n{question}"}]
             ) as stream:
                 for text in stream.text_stream:
                     yield f"data: {json.dumps({'text': text}, ensure_ascii=False)}\n\n"
