@@ -1,14 +1,13 @@
 // ── AI 申論答題模組 ──────────────────────────────────────────
 
-const aiQuestion         = document.getElementById("aiQuestion");
-const aiSubmitBtn        = document.getElementById("aiSubmitBtn");
-const aiSubmitText       = document.getElementById("aiSubmitText");
-const aiLoadingSpinner   = document.getElementById("aiLoadingSpinner");
-const aiAnswerWrap       = document.getElementById("aiAnswerWrap");
+const aiQuestion       = document.getElementById("aiQuestion");
+const aiSubmitBtn      = document.getElementById("aiSubmitBtn");
+const aiSubmitText     = document.getElementById("aiSubmitText");
+const aiLoadingSpinner = document.getElementById("aiLoadingSpinner");
+const aiAnswerWrap     = document.getElementById("aiAnswerWrap");
 const aiAnswerStructured = document.getElementById("aiAnswerStructured");
 const aiAnswerParagraph  = document.getElementById("aiAnswerParagraph");
 const aiAnswerConcise    = document.getElementById("aiAnswerConcise");
-const aiAnswerLaws       = document.getElementById("aiAnswerLaws");
 
 // Tab 切換由 app.js 統一處理
 
@@ -35,27 +34,29 @@ async function submitQuestion() {
   aiLoadingSpinner.style.display = "";
   aiSubmitBtn.disabled           = true;
   aiAnswerWrap.style.display     = "";
-  aiAnswerStructured.innerHTML   = '<span class="ai-cursor">▍</span>';
-  aiAnswerParagraph.innerHTML    = '<span class="ai-cursor">▍</span>';
-  aiAnswerConcise.innerHTML      = '<span class="ai-cursor">▍</span>';
-  aiAnswerLaws.innerHTML         = '<span class="ai-cursor">▍</span>';
+  aiAnswerStructured.innerHTML = '<span class="ai-cursor">▍</span>';
+  aiAnswerParagraph.innerHTML  = '<span class="ai-cursor">▍</span>';
+  aiAnswerConcise.innerHTML    = '<span class="ai-cursor">▍</span>';
 
-  // 各欄的文字 buffer
-  const buffers = { STRUCTURED: "", PARAGRAPH: "", CONCISE: "", LAWS: "" };
-  const panels  = {
-    STRUCTURED: aiAnswerStructured,
-    PARAGRAPH:  aiAnswerParagraph,
-    CONCISE:    aiAnswerConcise,
-    LAWS:       aiAnswerLaws,
-  };
-  let currentSection = null;
-  let rawBuffer = "";   // 累積未完成的分隔符偵測
+  // 同時發三個請求
+  await Promise.all([
+    streamAnswer(q, "structured", aiAnswerStructured),
+    streamAnswer(q, "paragraph",  aiAnswerParagraph),
+    streamAnswer(q, "concise",    aiAnswerConcise),
+  ]);
 
+  aiSubmitText.style.display     = "";
+  aiLoadingSpinner.style.display = "none";
+  aiSubmitBtn.disabled           = false;
+}
+
+async function streamAnswer(question, style, targetEl) {
+  let buffer = "";
   try {
     const res = await fetch("/api/essay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q })
+      body: JSON.stringify({ question, style })
     });
     if (!res.ok) throw new Error(`伺服器錯誤 ${res.status}`);
 
@@ -65,7 +66,6 @@ async function submitQuestion() {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       const chunk = decoder.decode(value, { stream: true });
       for (const line of chunk.split("\n")) {
         if (!line.startsWith("data: ")) continue;
@@ -74,63 +74,20 @@ async function submitQuestion() {
         try {
           const parsed = JSON.parse(raw);
           if (parsed.error) throw new Error(parsed.error);
-          if (!parsed.text) continue;
-
-          rawBuffer += parsed.text;
-
-          // 偵測並切換分隔符
-          for (const key of ["STRUCTURED", "PARAGRAPH", "CONCISE", "LAWS"]) {
-            const marker = `[[[${key}]]]`;
-            const idx = rawBuffer.indexOf(marker);
-            if (idx !== -1) {
-              // marker 前的文字屬於舊區段
-              if (currentSection) {
-                buffers[currentSection] += rawBuffer.slice(0, idx);
-                renderPanel(currentSection, panels, buffers);
-              }
-              currentSection = key;
-              rawBuffer = rawBuffer.slice(idx + marker.length).replace(/^\n/, "");
-              break;
-            }
+          if (parsed.text) {
+            buffer += parsed.text;
+            targetEl.innerHTML = formatAnswer(buffer) + '<span class="ai-cursor">▍</span>';
           }
-
-          // 把累積文字寫入當前區段（若無進行中的 marker）
-          if (currentSection && !rawBuffer.includes("[[[")) {
-            buffers[currentSection] += rawBuffer;
-            rawBuffer = "";
-            renderPanel(currentSection, panels, buffers);
-          }
-        } catch (err) {
-          if (err.message !== "skip") console.warn(err);
-        }
+        } catch { /* skip malformed */ }
       }
     }
-
-    // 最後殘餘文字寫入
-    if (currentSection && rawBuffer) {
-      buffers[currentSection] += rawBuffer;
-    }
-    for (const key of ["STRUCTURED", "PARAGRAPH", "CONCISE"]) {
-      panels[key].innerHTML = formatAnswer(buffers[key].trim()) || panels[key].innerHTML;
-    }
-    panels["LAWS"].innerHTML = formatLaws(buffers["LAWS"].trim()) || panels["LAWS"].innerHTML;
-
+    targetEl.innerHTML = formatAnswer(buffer);
   } catch (err) {
-    [aiAnswerStructured, aiAnswerParagraph, aiAnswerConcise].forEach(el => {
-      el.innerHTML = `<div class="ai-error">❌ ${err.message}</div>`;
-    });
-  } finally {
-    aiSubmitText.style.display     = "";
-    aiLoadingSpinner.style.display = "none";
-    aiSubmitBtn.disabled           = false;
+    targetEl.innerHTML = `<div class="ai-error">❌ ${err.message}</div>`;
   }
 }
 
-function renderPanel(key, panels, buffers) {
-  panels[key].innerHTML = formatAnswer(buffers[key]) + '<span class="ai-cursor">▍</span>';
-}
-
-// 將文字轉為帶樣式 HTML
+// 將 Markdown 風格文字轉為帶樣式 HTML
 function formatAnswer(text) {
   return text
     .replace(/^(一|二|三|四|五)、(.+)$/gm, '<h4 class="ans-h4">$1、$2</h4>')
@@ -142,21 +99,12 @@ function formatAnswer(text) {
     .replace(/\n/g, "<br>");
 }
 
-// 法條區塊格式化（高亮法條名稱，處理課程資料未載全文的標記）
-function formatLaws(text) {
-  return text
-    .replace(/^【(.+?)】$/gm, '<h4 class="law-title">【$1】</h4>')
-    .replace(/條文全文：「(.+?)」/gs, '條文全文：<blockquote class="law-text">「$1」</blockquote>')
-    .replace(/（課程資料未載全文[^）]*）/g, '<span class="law-unverified">⚠️ $&</span>')
-    .replace(/\n{2,}/g, '</p><p>')
-    .replace(/\n/g, "<br>");
-}
-
-// 複製按鈕（事件委派）
+// 複製按鈕（動態綁定，因為是多個）
 document.addEventListener("click", e => {
   const btn = e.target.closest(".aiCopyBtn");
   if (!btn) return;
-  const text = document.getElementById(btn.dataset.target)?.innerText || "";
+  const targetId = btn.dataset.target;
+  const text = document.getElementById(targetId)?.innerText || "";
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = "✅ 已複製";
     setTimeout(() => btn.textContent = "📋 複製", 2000);
